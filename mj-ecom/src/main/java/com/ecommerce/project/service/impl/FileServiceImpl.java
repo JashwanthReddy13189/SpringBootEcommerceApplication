@@ -1,6 +1,6 @@
-package com.ecommerce.project.servie.impl;
+package com.ecommerce.project.service.impl;
 
-import com.ecommerce.project.servie.FileService;
+import com.ecommerce.project.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
