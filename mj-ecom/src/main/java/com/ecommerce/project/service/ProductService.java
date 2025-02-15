@@ -1,4 +1,4 @@
-package com.ecommerce.project.servie;
+package com.ecommerce.project.service;
 
 import com.ecommerce.project.payload.ProductDTO;
 import com.ecommerce.project.payload.ProductResponse;

@@ -1,4 +1,4 @@
-package com.ecommerce.project.repository;
+package com.ecommerce.project.repositories;
 
 import com.ecommerce.project.model.Category;
 import com.ecommerce.project.model.Product;
