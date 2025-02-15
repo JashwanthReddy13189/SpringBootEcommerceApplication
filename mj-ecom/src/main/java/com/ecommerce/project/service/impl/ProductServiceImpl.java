@@ -209,11 +209,11 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
+        productRepository.delete(product);
         // DELETE
         List<Cart> carts = cartRepository.findCartsByProductId(productId);
         carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
 
-        productRepository.delete(product);
         return modelMapper.map(product, ProductDTO.class);
     }
 
