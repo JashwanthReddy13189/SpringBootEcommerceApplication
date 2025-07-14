@@ -2,31 +2,5 @@ spring:
   application:
     name: order-service
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/order
-    username: ${POSTGRES_USERNAME}
-    password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    database: postgresql
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-#  h2:
-#    console:
-#      enabled: true
-
-#  datasource:
-#    url: jdbc:h2:mem:test
-
-#  jpa:
-#    show-sql: true
-#    hibernate:
-#      ddl-auto: create
-
-
-server:
-  port: 8084
+  config:
+    import: optional:configserver:http://localhost:8081
