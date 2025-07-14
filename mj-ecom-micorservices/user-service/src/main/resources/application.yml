@@ -4,18 +4,12 @@ spring:
 
   data:
     mongodb:
-      # uri: mongodb://jashwanth:jashwanth@localhost:27017/user-service
-      host: localhost
-      port: 27017
-      database: user-service
-      username: jashwanth
-      password: jashwanth
-      authentication-database: admin
+      uri: mongodb://localhost:27017/user-service
 
 #  datasource:
 #    url: jdbc:postgresql://localhost:5432/user
-#    username: jashuu
-#    password: jashuu
+#    username: ${POSTGRES_USERNAME}
+#    password: ${POSTGRES_PASSWORD}
 
 #  jpa:
 #    database: postgresql
