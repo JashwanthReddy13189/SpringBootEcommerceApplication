@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: config-service
+
+  profiles:
+    active: native
+
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:///C:/Users/NoMercy/JASHWANTH_JAVA_KIT/SpringBootEcommerceApplication/mj-ecom-micorservices/config-service/src/main/resources/config/
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+server:
+  port: 8081
