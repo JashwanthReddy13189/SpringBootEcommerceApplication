@@ -1,10 +1,12 @@
 spring:
   application:
     name: product-service
+
   datasource:
     url: jdbc:postgresql://localhost:5432/product
-    username: jashuu
-    password: jashuu
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     database: postgresql
