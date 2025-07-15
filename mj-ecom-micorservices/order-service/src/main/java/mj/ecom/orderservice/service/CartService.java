@@ -2,7 +2,11 @@ package mj.ecom.orderservice.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import mj.ecom.orderservice.clients.ProductServiceClient;
+import mj.ecom.orderservice.clients.UserServiceClient;
 import mj.ecom.orderservice.dto.CartItemRequest;
+import mj.ecom.orderservice.dto.ProductResponse;
+import mj.ecom.orderservice.dto.UserResponse;
 import mj.ecom.orderservice.model.CartItem;
 import mj.ecom.orderservice.repository.CartItemRepository;
 import org.springframework.stereotype.Service;
@@ -15,26 +19,25 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 public class CartService {
-    //private final ProductRepository productRepository;
+
     private final CartItemRepository cartItemRepository;
-    //private final UserRepository userRepository;
+    private final ProductServiceClient productServiceClient;
+    private final UserServiceClient userServiceClient;
 
-    public boolean addToCart(Long userId, CartItemRequest request) {
-        // Look for product
-        /*Optional<Product> productOpt = productRepository.findById(request.getProductId());
-        if (productOpt.isEmpty())
+    public boolean addToCart(String userId, CartItemRequest request) {
+        // L    ook for product
+        ProductResponse productResponse = productServiceClient.getAllProductById(String.valueOf(request.getProductId()));
+        if (productResponse == null || productResponse.getStockQuantity() < request.getQuantity()) {
             return false;
+        }
 
-        Product product = productOpt.get();
-        if (product.getStockQuantity() < request.getQuantity())
+        // validate the user from user-service microservice
+        UserResponse userResponse = userServiceClient.getUserById(String.valueOf(userId));
+        if (userResponse == null) {
             return false;
+        }
 
-        Optional<User> userOpt = userRepository.findById(Long.valueOf(userId));
-        if (userOpt.isEmpty())
-            return false;
-
-        User user = userOpt.get();*/
-
+        // checking existing cart items
         CartItem existingCartItem = cartItemRepository.findByUserIdAndProductId(userId, request.getProductId());
         if (existingCartItem != null) {
             // Update the quantity
@@ -53,7 +56,7 @@ public class CartService {
         return true;
     }
 
-    public boolean deleteItemFromCart(Long userId, Long productId) {
+    public boolean deleteItemFromCart(String userId, String productId) {
         //Optional<Product> productOpt = productRepository.findById(productId);
         //Optional<User> userOpt = userRepository.findById(Long.valueOf(userId));
         CartItem cartItem = cartItemRepository.findByUserIdAndProductId(userId, productId);
@@ -69,7 +72,7 @@ public class CartService {
         return cartItemRepository.findByUserId(userId);
     }
 
-    public void clearCart(Long userId) {
+    public void clearCart(String userId) {
         cartItemRepository.deleteByUserId(userId);
     }
 }

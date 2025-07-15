@@ -24,8 +24,8 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;*/
-    private Long userId;
-    private Long productId;
+    private String userId;
+    private String productId;
 
     private Integer quantity;
     private BigDecimal price;

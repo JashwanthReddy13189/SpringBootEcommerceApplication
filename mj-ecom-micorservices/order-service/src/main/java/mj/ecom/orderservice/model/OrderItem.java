@@ -19,7 +19,7 @@ public class OrderItem {
     /*@ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;*/
-    private Long productId;
+    private String productId;
 
     private Integer quantity;
     private BigDecimal price;
