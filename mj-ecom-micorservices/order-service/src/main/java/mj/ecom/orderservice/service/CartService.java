@@ -68,7 +68,7 @@ public class CartService {
         return false;
     }
 
-    public List<CartItem> getCart(Long userId) {
+    public List<CartItem> getCart(String userId) {
         return cartItemRepository.findByUserId(userId);
     }
 
