@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/user-service
+      uri: mongodb://jashwanth:jashwanth@localhost:27017/user-service?authSource=admin
 
   rabbitmq:
     host: localhost
