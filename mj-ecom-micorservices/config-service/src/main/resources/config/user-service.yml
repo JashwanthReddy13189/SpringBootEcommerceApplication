@@ -14,8 +14,17 @@ management:
     web:
       exposure:
         include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
 
 server:
   port: 8082
 
-
+logging:
+  file:
+    name: logs/user-service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 7

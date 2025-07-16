@@ -1,6 +1,7 @@
 package mj.ecom.productservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mj.ecom.productservice.dto.ProductRequest;
 import mj.ecom.productservice.dto.ProductResponse;
 import mj.ecom.productservice.service.ProductService;
@@ -13,12 +14,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
+@Slf4j
 public class ProductController {
 
     private final ProductService productService;
 
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest) {
+        log.info("Created Product {}", productRequest);
         return new ResponseEntity<ProductResponse>(productService.createProduct(productRequest),
                 HttpStatus.CREATED);
     }

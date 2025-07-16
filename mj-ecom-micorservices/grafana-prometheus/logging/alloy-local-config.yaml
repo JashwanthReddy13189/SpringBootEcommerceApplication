@@ -1,0 +1,65 @@
+discovery.docker "flog_scrape" {
+	host             = "unix:///var/run/docker.sock"
+	refresh_interval = "5s"
+}
+
+discovery.relabel "flog_scrape" {
+	targets = []
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+}
+
+loki.source.docker "flog_scrape" {
+	host             = "unix:///var/run/docker.sock"
+	targets          = discovery.docker.flog_scrape.targets
+	forward_to       = [loki.write.default.receiver]
+	relabel_rules    = discovery.relabel.flog_scrape.rules
+	refresh_interval = "5s"
+}
+
+local.file_match "system_logs" {
+	path_targets = [{"__path__" = "/var/log/*.log"}]
+	sync_period  = "5s"
+}
+
+loki.source.file "system_file_scrape" {
+	targets       = local.file_match.system_logs.targets
+	forward_to    = [loki.write.default.receiver]
+	tail_from_end = true
+}
+
+
+local.file_match "loki_app_logs" {
+	path_targets = [{"__path__" = "/logs/*.log"}]
+	sync_period  = "5s"
+}
+
+loki.source.file "loki_app_file_scrape" {
+	targets       = local.file_match.loki_app_logs.targets
+	forward_to    = [loki.write.default.receiver]
+	tail_from_end = true
+}
+
+
+local.file_match "parent_app_logs" {
+	path_targets = [{"__path__" = "/logs-parent/*.log"}]
+	sync_period  = "5s"
+}
+
+loki.source.file "parent_app_file_scrape" {
+	targets       = local.file_match.parent_app_logs.targets
+	forward_to    = [loki.write.default.receiver]
+	tail_from_end = true
+}
+
+loki.write "default" {
+	endpoint {
+		url       = "http://gateway:3100/loki/api/v1/push"
+		tenant_id = "tenant1"
+	}
+	external_labels = {}
+}
