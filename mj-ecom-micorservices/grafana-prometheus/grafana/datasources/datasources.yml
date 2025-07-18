@@ -13,3 +13,7 @@ datasources:
       httpHeaderName1: "X-Scope-OrgID"
     secureJsonData:
       httpHeaderValue1: "tenant1"
+  - name: Zipkin
+    type: zipkin
+    access: proxy
+    url: http://zipkin:9411

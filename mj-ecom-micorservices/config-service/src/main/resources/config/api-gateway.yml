@@ -1,0 +1,56 @@
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: user-service
+#          uri: lb://USER-SERVICE #lb- used for load balancing to requests without mentioning port numbers
+#          predicates:
+#            - Path=/users/**
+#          filters:
+#            - "RewritePath=/users(?<segment>/?.*),/api/users${segment}" # we are rewriting api mappings to secure original api mappings
+#        - id: product-service
+#          uri: lb://PRODUCT-SERVICE
+#          predicates:
+#            - Path=/products/**
+#          filters:
+#            - "RewritePath=/products(?<segment>/?.*),/api/products${segment}" # we are rewriting api mappings to secure original api mappings
+#        - id: order-service
+#          uri: lb://ORDER-SERVICE
+#          predicates:
+#            - Path=/orders/**, /cart/**
+#          filters:
+#            - "RewritePath=/(?<segment>.*),/api/${segment}" # we are rewriting api mappings to secure original api mappings
+#        - id: eureka-service
+#          uri: http://localhost:8761
+#          predicates:
+#            - Path=/eureka/main
+#          filters:
+#            - SetPath=/
+#        - id: eureka-service-static
+#          uri: http://localhost:8761
+#          predicates:
+#            - Path=/eureka/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    tracing:
+      sampling:
+        probability: 1.0
+
+logging:
+  file:
+    name: logs/api-gateway-service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 7
+    #level:
+    #root: info
+    #org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
+    #org.springframework.cloud.gateway: TRACE
+
+server:
+  port: 8085
