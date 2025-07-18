@@ -23,6 +23,12 @@ management:
     web:
       exposure:
         include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
   tracing:
     sampling:
       probability: 1.0

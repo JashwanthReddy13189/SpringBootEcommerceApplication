@@ -14,12 +14,21 @@ public class GatewayConfig {
         return builder.routes()
                 .route("user-service", r -> r.path("/api/users/**")
                         //.filters(f -> f.rewritePath("/users(?<segment>/?.*)", "/api/users${segment}")) // regex to hide api mappings
+                        .filters(f -> f.circuitBreaker(config -> config
+                                .setName("ecomCircuitBreaker")
+                                .setFallbackUri("forward:/fallback/users")))
                         .uri("lb://USER-SERVICE"))
                 .route("product-service", r -> r.path("/api/products/**")
                         //.filters(f -> f.rewritePath("/products(?<segment>/?.*)", "/api/products${segment}"))
+                        .filters(f -> f.circuitBreaker(config -> config
+                                .setName("ecomCircuitBreaker")
+                                .setFallbackUri("forward:/fallback/products")))
                         .uri("lb://PRODUCT-SERVICE"))
                 .route("order-service", r -> r.path("/api/cart/**", "/api/orders/**")
                         //.filters(f -> f.rewritePath("/(?<segment>.*)", "/api/${segment}"))
+                        .filters(f -> f.circuitBreaker(config -> config
+                                .setName("ecomCircuitBreaker")
+                                .setFallbackUri("forward:/fallback/orders")))
                         .uri("lb://ORDER-SERVICE"))
                 .route("eureka-service", r -> r.path("/eureka/main")
                         .filters(f -> f.rewritePath("/eureka/main", "/"))

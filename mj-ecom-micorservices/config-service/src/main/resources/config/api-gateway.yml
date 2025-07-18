@@ -36,9 +36,15 @@ management:
     web:
       exposure:
         include: "*"
-    tracing:
-      sampling:
-        probability: 1.0
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
 
 logging:
   file:
@@ -54,3 +60,17 @@ logging:
 
 server:
   port: 8085
+
+# circuit breaker setup
+resilience4j:
+  circuitbreaker:
+    instances:
+      ecomCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slidingWindowType: count_based
