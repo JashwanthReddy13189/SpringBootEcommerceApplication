@@ -44,6 +44,8 @@ logging:
       max-file-size: 5MB
       max-history: 7
 
+message: "Hey Jashwanth"
+
 # circuit breaker setup
 resilience4j:
   circuitbreaker:
@@ -57,3 +59,14 @@ resilience4j:
         failureRateThreshold: 50
         automaticTransitionFromOpenToHalfOpenEnabled: true
         slidingWindowType: count_based
+  retry:
+    instances:
+      retryBreaker:
+        maxAttempts: 5
+        waitDuration: 500ms
+  ratelimiter:
+    instances:
+      rateLimiter:
+        timeout-duration: 0
+        limit-refresh-period: 4s
+        limit-for-period: 2

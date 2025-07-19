@@ -75,6 +75,17 @@ services:
       - backend
     restart: unless-stopped
 
+  redis:
+    container_name: redis_container
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+    volumes:
+      - redis:/data/gateway
+    restart: unless-stopped
+
 networks:
   backend:
     driver: bridge
@@ -85,3 +96,4 @@ volumes:
   postgres:
   pgadmin:
   mongodb_data:
+  redis:
