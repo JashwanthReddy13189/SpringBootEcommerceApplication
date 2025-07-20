@@ -1,16 +1,4 @@
 spring:
-  application:
-    name: config-service
-
-  profiles:
-    active: native
-
-  cloud:
-    config:
-      server:
-        native:
-          search-locations: file:///C:/Users/NoMercy/JASHWANTH_JAVA_KIT/SpringBootEcommerceApplication/mj-ecom-micorservices/config-service/src/main/resources/config/
-
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
@@ -24,6 +12,18 @@ management:
     web:
       exposure:
         include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+rabbitmq:
+  exchange:
+    name: order.exchange
+  queue:
+    name: order.queue
+  routing:
+    key: order.tracking
 
 server:
-  port: 8080
+  port: 8086
+
