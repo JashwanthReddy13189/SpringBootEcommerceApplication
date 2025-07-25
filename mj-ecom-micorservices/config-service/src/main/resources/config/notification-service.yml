@@ -1,11 +1,26 @@
 spring:
-  rabbitmq:
-    host: ${RABBITMQ_HOST:localhost}
-    port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USERNAME:guest}
-    password: ${RABBITMQ_PASSWORD:guest}
-    virtual-host: ${RABBITMQ_VHOST:guest}
-    connection-timeout: 30000
+#  rabbitmq:
+#    host: ${RABBITMQ_HOST:localhost}
+#    port: ${RABBITMQ_PORT:5672}
+#    username: ${RABBITMQ_USERNAME:guest}
+#    password: ${RABBITMQ_PASSWORD:guest}
+#    virtual-host: ${RABBITMQ_VHOST:guest}
+#    connection-timeout: 30000
+
+  cloud:
+    function:
+      definition: orderCreated
+    stream:
+      function:
+        definition: orderCreated
+      bindings:
+        orderCreated-in-0:
+          destination: order.exchange
+          group: notification-group
+          content-type: application/json
+      kafka:
+        binder:
+          brokers: localhost:9092
 
 management:
   endpoints:
@@ -16,13 +31,13 @@ management:
     health:
       show-details: always
 
-rabbitmq:
-  exchange:
-    name: order.exchange
-  queue:
-    name: order.queue
-  routing:
-    key: order.tracking
+#rabbitmq:
+#  exchange:
+#    name: order.exchange
+#  queue:
+#    name: order.queue
+#  routing:
+#    key: order.tracking
 
 server:
   port: 8086

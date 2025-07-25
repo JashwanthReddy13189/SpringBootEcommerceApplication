@@ -1,15 +1,16 @@
 package mj.ecom.notificationservice.consumer;
 
+import lombok.extern.slf4j.Slf4j;
 import mj.ecom.notificationservice.dto.OrderCreatedEvent;
-import mj.ecom.notificationservice.dto.OrderStatus;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.function.Consumer;
 
 @Service
+@Slf4j
 public class OrderEventConsumer {
-    @RabbitListener(queues = "${rabbitmq.queue.name}")
+    /*@RabbitListener(queues = "${rabbitmq.queue.name}")
     public void handleOrderEvent(OrderCreatedEvent orderCreatedEvent) {
         System.out.println("Received Order Event: " + orderCreatedEvent);
 
@@ -24,5 +25,13 @@ public class OrderEventConsumer {
         // send emails
         // generate invoice
         // send seller notification
+    }*/
+
+    @Bean
+    public Consumer<OrderCreatedEvent> orderCreated() {
+        return event -> {
+            log.info("Received OrderCreatedEvent with orderId : {}", event.getOrderId());
+            log.info("Received OrderCreatedEvent with userId : {}", event.getUserId());
+        };
     }
 }

@@ -9,8 +9,7 @@ import mj.ecom.orderservice.model.Order;
 import mj.ecom.orderservice.model.OrderItem;
 import mj.ecom.orderservice.model.OrderStatus;
 import mj.ecom.orderservice.repository.OrderRepository;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,13 +23,7 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final CartService cartService;
     private final OrderRepository orderRepository;
-    private final RabbitTemplate rabbitTemplate;
-
-    @Value("${rabbitmq.exchange.name}")
-    private String exchangeName;
-
-    @Value("${rabbitmq.routing.key}")
-    private String routingKey;
+    private final StreamBridge streamBridge;
 
     public Optional<OrderResponse> createOrder(String userId) {
         // Validate for cart items
@@ -84,10 +77,12 @@ public class OrderService {
         );
 
         // sending event to rabbitmq
-        rabbitTemplate.convertAndSend(exchangeName,
+        /*rabbitTemplate.convertAndSend(exchangeName,
                 routingKey,
                 orderCreatedEvent
-        );
+        );*/
+
+        streamBridge.send("createOrder-out-0", orderCreatedEvent);
 
         return Optional.of(mapToOrderResponse(savedOrder));
     }

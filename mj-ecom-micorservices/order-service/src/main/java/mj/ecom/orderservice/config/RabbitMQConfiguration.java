@@ -1,3 +1,4 @@
+/*
 package mj.ecom.orderservice.config;
 
 import org.springframework.amqp.core.*;
@@ -61,3 +62,4 @@ public class RabbitMQConfiguration {
         return rabbitTemplate;
     }
 }
+*/
