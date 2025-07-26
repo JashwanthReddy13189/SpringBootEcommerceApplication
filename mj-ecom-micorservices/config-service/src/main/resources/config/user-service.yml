@@ -1,15 +1,15 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://jashwanth:jashwanth@localhost:27017/user-service?authSource=admin
+      uri: mongodb://localhost:27017/User-Service?authSource=admin
 
-  rabbitmq:
-    host: ${RABBITMQ_HOST:localhost}
-    port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USERNAME:guest}
-    password: ${RABBITMQ_PASSWORD:guest}
-    virtual-host: ${RABBITMQ_VHOST:guest}
-    connection-timeout: 30000
+#  rabbitmq:
+#    host: ${RABBITMQ_HOST:localhost}
+#    port: ${RABBITMQ_PORT:5672}
+#    username: ${RABBITMQ_USERNAME:guest}
+#    password: ${RABBITMQ_PASSWORD:guest}
+#    virtual-host: ${RABBITMQ_VHOST:guest}
+#    connection-timeout: 30000
 
 management:
   endpoints:
@@ -36,3 +36,12 @@ logging:
     rollingpolicy:
       max-file-size: 5MB
       max-history: 7
+
+keycloak:
+  admin:
+    username: jashwanth
+    password: jashwanth
+    url: http://localhost:8443
+    realm: mj-ecom
+    client-id: oauth2-pkce
+    client-uid: f77ac29c-3670-4532-8e9c-10e0bdf76172

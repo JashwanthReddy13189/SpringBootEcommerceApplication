@@ -6,6 +6,7 @@ import mj.ecom.userservice.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import mj.ecom.userservice.model.Address;
 import mj.ecom.userservice.model.User;
+import mj.ecom.userservice.model.UserRole;
 import mj.ecom.userservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final KeyCloakAdmin keyCloakAdmin;
 //    private List<User> userList = new ArrayList<>();
 //    private Long nextId = 1L;
 
@@ -27,9 +29,23 @@ public class UserService {
     }
 
     public void addUser(UserRequest userRequest) {
-//        user.setId(nextId++);
+        // getting keycloak token
+        String token = keyCloakAdmin.getAdminAccessToken();
+        // create user in keycloak
+        String keyCloakUserId = keyCloakAdmin.createUser(token, userRequest);
+
         User user = new User();
         updateUserFromRequest(user, userRequest);
+        user.setKeycloakId(keyCloakUserId);
+
+        // adding user role as default
+        UserRole userRole = UserRole.USER;
+
+        // if user request has any specific role it will be assigned
+        if (userRequest.getRole() != null) userRole = userRequest.getRole();
+
+        keyCloakAdmin.assignRealmRoleToUser(userRequest.getUserName(), userRole, keyCloakUserId);
+
         userRepository.save(user);
     }
 
@@ -66,6 +82,7 @@ public class UserService {
     private UserResponse mapToUserResponse(User user) {
         UserResponse response = new UserResponse();
         response.setId(String.valueOf(user.getId()));
+        response.setKeycloakId(user.getKeycloakId());
         response.setFirstName(user.getFirstName());
         response.setLastName(user.getLastName());
         response.setEmail(user.getEmail());
