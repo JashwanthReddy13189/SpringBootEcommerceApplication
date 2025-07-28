@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/productdb
-    username: jashuu
-    password: jashuu
-    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/productdb}
+    username: ${SPRING_DATASOURCE_USERNAME:jashuu}
+    password: ${SPRING_DATASOURCE_PASSWORD:jashuu}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
 
   jpa:
     database: postgresql
@@ -34,14 +34,24 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
 
 server:
   port: 8083
 
-logging:
-  file:
-    name: logs/product-service.log
-  logback:
-    rollingpolicy:
-      max-file-size: 5MB
-      max-history: 7
+#logging:
+#  file:
+#    name: logs/product-service.log
+#  logback:
+#    rollingpolicy:
+#      max-file-size: 5MB
+#      max-history: 7
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-service:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

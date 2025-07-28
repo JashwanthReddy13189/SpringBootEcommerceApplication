@@ -1,7 +1,7 @@
 services:
   # Database Services
   postgres:
-    container_name: postgres_container
+    container_name: postgres
     image: postgres:14
     environment:
       POSTGRES_USER: jashuu
@@ -9,6 +9,7 @@ services:
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
+      - ./init-multi-db.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
@@ -33,6 +34,7 @@ services:
   mongo:
     container_name: mongo
     image: mongodb/mongodb-community-server:7.0.1-ubuntu2204
+    mem_limit: 700mb
     ports:
       - "27017:27017"
     networks:
@@ -95,12 +97,13 @@ services:
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:26.3.2
+    mem_limit: 700mb
     ports:
       - "8443:8080"
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-    command: ["start-dev"]
+    command: [ "start-dev" ]
     volumes:
       - keycloak_data:/opt/keycloak/data
     networks:
@@ -114,6 +117,7 @@ services:
       - "9411:9411"
     networks:
       - loki
+      - backend
 
   read:
     image: grafana/loki:latest
@@ -123,7 +127,7 @@ services:
       - 7946
       - 9095
     volumes:
-      - ./grafana-prometheus/logging/loki-config.yaml:/etc/loki/config.yaml
+      - ../../grafana-prometheus/logging/loki-config.yaml:/etc/loki/config.yaml
     depends_on:
       - minio
     healthcheck:
@@ -144,7 +148,7 @@ services:
       - 7946
       - 9095
     volumes:
-      - ./grafana-prometheus/logging/loki-config.yaml:/etc/loki/config.yaml
+      - ../../grafana-prometheus/logging/loki-config.yaml:/etc/loki/config.yaml
     healthcheck:
       test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1" ]
       interval: 10s
@@ -158,7 +162,7 @@ services:
   alloy:
     image: grafana/alloy:latest
     volumes:
-      - ./grafana-prometheus/logging/alloy-local-config.yaml:/etc/alloy/config.alloy:ro
+      - ../../grafana-prometheus/logging/alloy-local-config.yaml:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - ./logs:/logs-parent:ro
     command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
@@ -201,7 +205,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./grafana-prometheus/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../../grafana-prometheus/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - loki
 
@@ -239,14 +243,14 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./grafana-prometheus/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ../../grafana-prometheus/grafana/datasources:/etc/grafana/provisioning/datasources
     networks:
       - loki
 
   backend:
     image: grafana/loki:latest
     volumes:
-      - ./grafana-prometheus/logging/loki-config.yaml:/etc/loki/config.yaml
+      - ../../grafana-prometheus/logging/loki-config.yaml:/etc/loki/config.yaml
     ports:
       - "3100"
       - "7946"
@@ -330,6 +334,200 @@ services:
     command: -f json -d 200ms -l
     networks:
       - loki
+
+  # Microservices Infrastructure
+  # Config-service
+  config-service:
+    build: ../../config-service
+    container_name: config-service
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    environment:
+      #- SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS=/config
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST}
+    volumes:
+      - ../../config-service/src/main/resources/config:/config
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  eureka-service:
+    build: ../../eureka-service
+    container_name: eureka-service
+    ports:
+      - "8761:8761"
+    networks:
+      - backend
+    depends_on:
+      config-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+
+  api-gateway:
+    build: ../../api-gateway
+    container_name: api-gateway
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      config-service:
+        condition: service_healthy
+      eureka-service:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      keycloak:
+        condition: service_started
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8085/actuator/health" ]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  user-service:
+    build: ../../user-service
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MONGO_URI=mongodb://mongo:27017/User-Service?authSource=admin
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST}
+      - KEYCLOAK_ADMIN_USERNAME=jashwanth
+      - KEYCLOAK_ADMIN_PASSWORD=jashwanth
+      - KEYCLOAK_ADMIN_URL=http://keycloak:8080
+      - KEYCLOAK_ADMIN_REALM=mj-ecom
+      - KEYCLOAK_ADMIN_CLIENT_ID=oauth2-pkce
+      - KEYCLOAK_ADMIN_CLIENT_UID=994b19fb-3436-4442-8cc2-837d994c9412
+    depends_on:
+      config-service:
+        condition: service_healthy
+      eureka-service:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      keycloak:
+        condition: service_started
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8082/actuator/health" ]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: on-failure
+
+  product-service:
+    build: ../../product-service
+    container_name: product-service
+    networks:
+      - backend
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - POSTGRES_URL=jdbc:postgresql://postgres:5432/productdb
+      - POSTGRES_USERNAME=jashuu
+      - POSTGRES_PASSWORD=jashuu
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST}
+    depends_on:
+      config-service:
+        condition: service_healthy
+      eureka-service:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8083/actuator/health" ]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    #restart: on-failure
+
+  order-service:
+    build: ../../order-service
+    container_name: order-service
+    networks:
+      - backend
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/orderdb
+      - SPRING_DATASOURCE_USERNAME=jashuu
+      - SPRING_DATASOURCE_PASSWORD=jashuu
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+    depends_on:
+      config-service:
+        condition: service_healthy
+      eureka-service:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8084/actuator/health" ]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+
+  notification-service:
+    build: ../../notification-service
+    container_name: notification-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8086:8086"
+    depends_on:
+      config-service:
+        condition: service_healthy
+      eureka-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8086/actuator/health" ]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
 networks:
   backend:
