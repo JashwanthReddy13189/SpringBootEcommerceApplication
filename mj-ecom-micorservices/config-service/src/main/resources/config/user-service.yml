@@ -26,6 +26,13 @@ management:
     sampling:
       probability: 1.0
 
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
 server:
   port: 8082
 
@@ -44,4 +51,4 @@ keycloak:
     url: http://localhost:8443
     realm: mj-ecom
     client-id: oauth2-pkce
-    client-uid: f77ac29c-3670-4532-8e9c-10e0bdf76172
+    client-uid: 994b19fb-3436-4442-8cc2-837d994c9412
