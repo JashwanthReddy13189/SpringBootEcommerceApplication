@@ -1,0 +1,63 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+
+logging:
+  file:
+    name: logs/api-gateway-service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 7
+    #level:
+    #root: info
+    #org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
+    #org.springframework.cloud.gateway: TRACE
+
+server:
+  port: 8085
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-service:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+gateway:
+  eureka-url: http://eureka-service:8761
+
+# circuit breaker setup
+resilience4j:
+  circuitbreaker:
+    instances:
+      ecomCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slidingWindowType: count_based
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/mj-ecom

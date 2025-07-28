@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/User-Service?authSource=admin
+      uri: ${MONGO_URI}
 
 #  rabbitmq:
 #    host: ${RABBITMQ_HOST:localhost}
@@ -25,11 +25,14 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka-service:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
 
@@ -48,7 +51,7 @@ keycloak:
   admin:
     username: jashwanth
     password: jashwanth
-    url: http://localhost:8443
+    url: http://keycloak:8080
     realm: mj-ecom
     client-id: oauth2-pkce
     client-uid: 994b19fb-3436-4442-8cc2-837d994c9412
