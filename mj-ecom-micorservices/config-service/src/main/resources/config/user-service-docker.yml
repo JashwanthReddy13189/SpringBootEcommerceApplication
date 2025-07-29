@@ -40,6 +40,9 @@ server:
   port: 8082
 
 logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
   file:
     name: logs/user-service.log
   logback:
