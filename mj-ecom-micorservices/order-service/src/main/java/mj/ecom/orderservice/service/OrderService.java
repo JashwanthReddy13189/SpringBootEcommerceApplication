@@ -10,9 +10,11 @@ import mj.ecom.orderservice.model.OrderItem;
 import mj.ecom.orderservice.model.OrderStatus;
 import mj.ecom.orderservice.repository.OrderRepository;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,18 +28,11 @@ public class OrderService {
     private final StreamBridge streamBridge;
 
     public Optional<OrderResponse> createOrder(String userId) {
-        // Validate for cart items
+        // Validate for cart items and also userId
         List<CartItem> cartItems = cartService.getCart(userId);
         if (cartItems.isEmpty()) {
             return Optional.empty();
         }
-
-        // Validate for user
-        /*Optional<User> userOptional = userRepository.findById(Long.valueOf(userId));
-        if (userOptional.isEmpty()) {
-            return Optional.empty();
-        }
-        User user = userOptional.get();*/
 
         // Calculate total price
         BigDecimal totalPrice = cartItems.stream()
@@ -115,5 +110,17 @@ public class OrderService {
                         .toList(),
                 order.getCreatedAt()
         );
+    }
+
+    public List<OrderResponse> getAllOrdersForUserId(String userId) {
+        // check if there are any orders placed with the user or not
+        List<Order> orders = orderRepository.findByUserId(userId);
+        if (orders.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return orders.stream()
+                .map(order -> mapToOrderResponse(order))
+                .collect(Collectors.toList());
     }
 }
