@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mj.ecom.productservice.dto.ProductRequest;
 import mj.ecom.productservice.dto.ProductResponse;
+import mj.ecom.productservice.model.Product;
 import mj.ecom.productservice.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,21 @@ public class ProductController {
         return productService.updateProduct(id, productRequest)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{productId}/reduce-stock")
+    public ResponseEntity<String> reduceStock(@PathVariable String productId, @RequestParam int quantity, @RequestParam(required = false) String transaction) {
+        log.info("Reducing Stock {} and reducing quantity request received from {}", productId, transaction);
+        return productService.reduceStock(productId, quantity)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.ok("Error while updating stock quantity of product" + productId));
+    }
+
+    @PatchMapping("/{productId}/add-stock")
+    public ResponseEntity<String> addStock(@PathVariable String productId, @RequestParam int quantity) {
+        return productService.addStock(productId, quantity)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.ok("Error while updating stock quantity of product" + productId));
     }
 
     @DeleteMapping("/{id}")
