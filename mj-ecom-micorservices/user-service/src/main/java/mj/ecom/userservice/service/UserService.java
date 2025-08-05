@@ -8,6 +8,7 @@ import mj.ecom.userservice.model.Address;
 import mj.ecom.userservice.model.User;
 import mj.ecom.userservice.model.UserRole;
 import mj.ecom.userservice.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +20,6 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final KeyCloakAdmin keyCloakAdmin;
-//    private List<User> userList = new ArrayList<>();
-//    private Long nextId = 1L;
 
     public List<UserResponse> fetchAllUsers() {
         return userRepository.findAll().stream()
@@ -64,6 +63,11 @@ public class UserService {
     }
 
     private void updateUserFromRequest(User user, UserRequest userRequest) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        user.setUserName(userRequest.getUserName());
+        if (userRequest.getPassword() != null && userRequest.getPassword().isEmpty()) {
+            user.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
+        }
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setEmail(userRequest.getEmail());
@@ -82,13 +86,13 @@ public class UserService {
     private UserResponse mapToUserResponse(User user) {
         UserResponse response = new UserResponse();
         response.setId(String.valueOf(user.getId()));
+        response.setUserName(user.getUserName());
         response.setKeycloakId(user.getKeycloakId());
         response.setFirstName(user.getFirstName());
         response.setLastName(user.getLastName());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
         response.setRole(user.getRole());
-
         if (user.getAddress() != null) {
             AddressDTO addressDTO = new AddressDTO();
             addressDTO.setStreet(user.getAddress().getStreet());

@@ -7,6 +7,7 @@ import mj.ecom.userservice.model.UserRole;
 public class UserResponse {
     private String id;
     private String keycloakId;
+    private String userName;
     private String firstName;
     private String lastName;
     private String email;

@@ -15,6 +15,8 @@ public class User {
     @Id
     private String id;
     private String keycloakId;
+    private String userName;
+    private String password;
     private String firstName;
     private String lastName;
 

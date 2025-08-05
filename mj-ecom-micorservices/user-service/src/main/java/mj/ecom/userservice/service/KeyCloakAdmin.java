@@ -1,5 +1,6 @@
 package mj.ecom.userservice.service;
 
+import lombok.RequiredArgsConstructor;
 import mj.ecom.userservice.dto.UserRequest;
 import mj.ecom.userservice.model.UserRole;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 
 @Service
+@RequiredArgsConstructor
 public class KeyCloakAdmin {
 
     @Value("${keycloak.admin.username}")
@@ -36,7 +38,7 @@ public class KeyCloakAdmin {
     @Value("${keycloak.admin.client-uid}")
     private String clientUid;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     public String getAdminAccessToken() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
