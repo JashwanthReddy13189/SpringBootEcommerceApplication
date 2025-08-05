@@ -46,6 +46,11 @@ public class ProductService {
         product.setStockQuantity(productRequest.getStockQuantity());
     }
 
+    private void patchProductFromRequest(Product product, int quantity, String transaction) {
+        if (transaction.equals("reduceStock")) product.setStockQuantity(product.getStockQuantity() - quantity);
+        else product.setStockQuantity(product.getStockQuantity() + quantity);
+    }
+
     public Optional<ProductResponse> updateProduct(Long id, ProductRequest productRequest) {
         return productRepository.findById(id)
                 .map(existingProduct -> {
@@ -79,5 +84,23 @@ public class ProductService {
     public Optional<ProductResponse> getAllProductById(String id) {
         return productRepository.findByIdAndActiveTrue(Long.valueOf(id))
                 .map(this::mapToProductResponse);
+    }
+
+    public Optional<String> reduceStock(String productId, int quantity) {
+        return productRepository.findById(Long.valueOf(productId))
+                .map(existingProduct -> {
+                    patchProductFromRequest(existingProduct, quantity, "reduceStock");
+                    Product savedProduct = productRepository.save(existingProduct);
+                    return "Updated Quantity for product" + productId + " and total available quantity" + savedProduct.getStockQuantity();
+                });
+    }
+
+    public Optional<String> addStock(String productId, int quantity) {
+        return productRepository.findById(Long.valueOf(productId))
+                .map(existingProduct -> {
+                    patchProductFromRequest(existingProduct, quantity, "addStock");
+                    Product savedProduct = productRepository.save(existingProduct);
+                    return "Updated Quantity for product" + productId + " and total available quantity" + savedProduct.getStockQuantity();
+                });
     }
 }

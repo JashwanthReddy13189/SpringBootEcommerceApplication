@@ -1,6 +1,8 @@
 package mj.ecom.orderservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mj.ecom.orderservice.clients.ProductServiceClient;
 import mj.ecom.orderservice.dto.OrderCreatedEvent;
 import mj.ecom.orderservice.dto.OrderItemDTO;
 import mj.ecom.orderservice.dto.OrderResponse;
@@ -20,12 +22,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final CartService cartService;
     private final OrderRepository orderRepository;
     private final StreamBridge streamBridge;
+    private final ProductServiceClient productServiceClient;
 
     public Optional<OrderResponse> createOrder(String userId) {
         // Validate for cart items and also userId
@@ -71,11 +75,17 @@ public class OrderService {
                 savedOrder.getCreatedAt()
         );
 
-        // sending event to rabbitmq
-        /*rabbitTemplate.convertAndSend(exchangeName,
-                routingKey,
-                orderCreatedEvent
-        );*/
+        // reduce stock if order placed successfully
+        if (savedOrder.getStatus() == OrderStatus.CONFIRMED) {
+            log.info("Order has been created and updating product stock quantity");
+            savedOrder.getItems().forEach(item ->
+                    productServiceClient.reduceProductStock(
+                            item.getProductId(),
+                            item.getQuantity(),
+                            "order-service"
+                    )
+            );
+        }
 
         streamBridge.send("createOrder-out-0", orderCreatedEvent);
 

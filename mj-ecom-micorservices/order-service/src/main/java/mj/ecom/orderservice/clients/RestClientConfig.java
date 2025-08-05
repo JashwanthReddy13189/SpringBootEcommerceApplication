@@ -3,6 +3,7 @@ package mj.ecom.orderservice.clients;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.propagation.Propagator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -11,14 +12,12 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
 
 @Configuration
+@RequiredArgsConstructor
 public class RestClientConfig {
 
-    @Autowired(required = false)
-    private ObservationRegistry observationRegistry;
-    @Autowired(required = false)
-    private Tracer tracer;
-    @Autowired(required = false)
-    private Propagator propagator;
+    private final ObservationRegistry observationRegistry;
+    private final Tracer tracer;
+    private final Propagator propagator;
 
     @Bean
     @LoadBalanced
