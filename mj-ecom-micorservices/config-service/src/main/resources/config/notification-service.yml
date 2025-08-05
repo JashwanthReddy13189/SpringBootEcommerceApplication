@@ -21,6 +21,17 @@ spring:
       kafka:
         binder:
           brokers: localhost:9092
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: noreply.jashwanthreddy@gmail.com
+    password: saki klmf ofri frol
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 management:
   endpoints:
