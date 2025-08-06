@@ -40,6 +40,8 @@ services:
     networks:
       - backend
     restart: unless-stopped
+    volumes:
+      - mongodb_data:/data/mongodb
 
   redis:
     container_name: redis_container

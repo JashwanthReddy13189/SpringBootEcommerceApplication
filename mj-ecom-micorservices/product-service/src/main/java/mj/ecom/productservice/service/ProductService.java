@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +52,7 @@ public class ProductService {
         else product.setStockQuantity(product.getStockQuantity() + quantity);
     }
 
-    public Optional<ProductResponse> updateProduct(Long id, ProductRequest productRequest) {
+    public Optional<ProductResponse> updateProduct(String id, ProductRequest productRequest) {
         return productRepository.findById(id)
                 .map(existingProduct -> {
                     updateProductFromRequest(existingProduct, productRequest);
@@ -66,7 +67,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public boolean deleteProduct(Long id) {
+    public boolean deleteProduct(String id) {
         return productRepository.findById(id)
                 .map(product -> {
                     product.setActive(false);
@@ -76,18 +77,19 @@ public class ProductService {
     }
 
     public List<ProductResponse> searchProducts(String keyword) {
-        return productRepository.searchProducts(keyword).stream()
+        String regex = ".*" + Pattern.quote(keyword) + ".*"; // Escapes special regex characters
+        return productRepository.findByActiveTrueAndStockQuantityGreaterThanAndNameRegexIgnoreCase(0, regex).stream()
                 .map(this::mapToProductResponse)
                 .collect(Collectors.toList());
     }
 
     public Optional<ProductResponse> getAllProductById(String id) {
-        return productRepository.findByIdAndActiveTrue(Long.valueOf(id))
+        return productRepository.findByIdAndActiveTrue(id)
                 .map(this::mapToProductResponse);
     }
 
     public Optional<String> reduceStock(String productId, int quantity) {
-        return productRepository.findById(Long.valueOf(productId))
+        return productRepository.findById(productId)
                 .map(existingProduct -> {
                     patchProductFromRequest(existingProduct, quantity, "reduceStock");
                     Product savedProduct = productRepository.save(existingProduct);
@@ -96,7 +98,7 @@ public class ProductService {
     }
 
     public Optional<String> addStock(String productId, int quantity) {
-        return productRepository.findById(Long.valueOf(productId))
+        return productRepository.findById(productId)
                 .map(existingProduct -> {
                     patchProductFromRequest(existingProduct, quantity, "addStock");
                     Product savedProduct = productRepository.save(existingProduct);
