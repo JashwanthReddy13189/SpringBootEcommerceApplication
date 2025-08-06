@@ -1,4 +1,4 @@
-Official repository of Java Spring Boot: Professional eCommerce Application
+Official repository of Java Spring Boot: eCommerce Application
 (Both Monolithic and Microservices Architecture)
 
 **Developer:** Jashwanth Reddy
