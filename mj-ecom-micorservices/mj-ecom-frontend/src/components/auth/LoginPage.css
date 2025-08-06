@@ -1,0 +1,213 @@
+/* ==== Background and Overall Layout ==== */
+.page-bg {
+    background: #ffeee0;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    display: flex;
+    flex-direction: row;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.09);
+    width: 850px;
+    min-height: 450px;
+    overflow: hidden;
+}
+
+.login-card-left, .login-card-right {
+    flex: 1;
+    padding: 42px 38px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-card-left {
+    max-width: 410px;
+}
+
+.login-card-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    padding: 20px 12px;
+}
+
+.login-illustration-big {
+    max-width: 350px;
+    width: 100%;
+}
+
+/* ==== Logo, Welcome and Title ==== */
+.login-logo-image {
+    width: 96px; /* Adjust width as needed */
+    height: auto; /* Maintains aspect ratio */
+    opacity: 1.0; /* 80% transparent */
+    mix-blend-mode: multiply; /* Helps blend with background, optional */
+    display: flex;
+    margin-bottom: 1.4rem;
+}
+
+.login-logo {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #ff8656;
+    margin-bottom: 1.4rem;
+}
+
+.login-welcome {
+    color: #111111;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.login-title {
+    font-size: 2.7rem;
+    font-weight: 800;
+    color: #111111;
+    margin: 0 0 2.6rem 0;
+}
+
+/* ==== Form Labels and Inputs ==== */
+.login-label {
+    display: block;
+    font-size: 1.01rem;
+    margin-bottom: 0.19rem;   /* was 0.38rem */
+    color: #2c2c2c;
+    font-weight: 500;
+}
+
+.login-input-alt {
+    width: 100%;
+    height: 36px;         /* was 48px, now shorter */
+    padding: 0 10px;      /* reduce side padding */
+    border-radius: 7px;
+    font-size: 1.01rem;   /* slightly smaller font */
+    border: 1.3px solid #e3e3e3;
+    background: #fffaee;
+    margin-bottom: 0.65rem; /* was 1.25rem, now closer together */
+    box-sizing: border-box;
+    transition: border 0.18s;
+}
+
+.login-input-alt:focus {
+    border: 1.5px solid #fd7e56;
+    outline: none;
+    background: #fff5dc;
+}
+
+/* ==== Password Field with Eye Icon ==== */
+.login-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.login-password-wrapper .login-input-alt {
+    padding-right: 38px;
+    margin-bottom: 0;     /* remove double margin; control with label/input above */
+    height: 36px;         /* keep same as above */
+}
+
+.login-pw-toggle {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #777;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    height: 24px;
+}
+
+/* ==== Forgot Password and Button ==== */
+.login-form-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.2rem;
+}
+
+.login-forgot-link {
+    color: #888;
+    font-size: 0.96rem;
+    text-decoration: none;
+}
+
+.login-forgot-link:hover {
+    color: #fd7e56;
+}
+
+.login-btn-alt {
+    width: 160px;
+    height: 45px;
+    background: #fd7e56;
+    color: #fff;
+    font-size: 1.13rem;
+    border: none;
+    border-radius: 22px;
+    font-weight: 600;
+    margin-top: 8px;
+    margin-bottom: 1.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .17s;
+}
+
+.login-btn-alt:hover {
+    background: #fd5c22;
+}
+
+/* ==== Error Message ==== */
+.login-error {
+    color: #dc2626;
+    margin-top: 0.7rem;
+    margin-bottom: 0.4rem;
+}
+
+/* ==== Signup Prompt ==== */
+.login-bottom-text-alt {
+    margin-top: 0.3rem;
+    text-align: left;
+    font-size: 0.98rem;
+    color: #bcbcbc;
+}
+
+.login-signup-link {
+    color: #ff8656;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-signup-link:hover {
+    text-decoration: underline;
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 950px) {
+    .login-card {
+        width: 100%;
+        min-width: 0;
+        margin: 18px;
+    }
+}
+
+@media (max-width: 750px) {
+    .login-card {
+        flex-direction: column;
+    }
+
+    .login-card-right {
+        padding: 40px 0;
+    }
+}

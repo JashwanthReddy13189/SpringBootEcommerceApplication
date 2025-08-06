@@ -3,6 +3,7 @@ package mj.ecom.apigateway.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,11 +26,12 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
+                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allows CORS requests
                         .pathMatchers("/eureka/**").permitAll()
                         .pathMatchers("/api/users/login").permitAll()
+                        .pathMatchers("/api/users/**").permitAll() // allows all user related api -> login/signup
                         .pathMatchers("/api/products/**").hasRole("PRODUCT")
                         .pathMatchers("/api/orders/**").hasRole("ORDER")
-                        .pathMatchers("/api/users/**").hasRole("USER")
                         .anyExchange().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(grantedAuthoritiesConverter())))
