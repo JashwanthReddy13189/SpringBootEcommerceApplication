@@ -37,7 +37,7 @@ public class GatewayConfig {
     public RouteLocator routes(RouteLocatorBuilder builder) {
         log.debug("Eureka service url - " + eurekaUrl);
         return builder.routes()
-                .route("user-service", r -> r.path("/api/users/**")
+                .route("user-service", r -> r.path("/api/users","/api/users/**")
                         //.filters(f -> f.rewritePath("/users(?<segment>/?.*)", "/api/users${segment}")) // regex to hide api mappings
                         .filters(f -> f
                                 .retry(retryConfig -> retryConfig

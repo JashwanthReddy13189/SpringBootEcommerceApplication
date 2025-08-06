@@ -104,4 +104,9 @@ public class UserService {
         }
         return response;
     }
+
+    public String loginAndGetToken(String username, String password) {
+        // Call the Keycloak token endpoint with provided credentials
+        return keyCloakAdmin.getUserAccessToken(username, password);
+    }
 }

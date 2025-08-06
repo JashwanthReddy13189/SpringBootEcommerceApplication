@@ -122,8 +122,29 @@ public class KeyCloakAdmin {
         ResponseEntity<Void> response = restTemplate.postForEntity(url, entity, Void.class);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException(" Fialed to assign role" + roleName + " to user " + username + ": HTTP " + response.getStatusCode() + " " + response.getBody());
+            throw new RuntimeException(" Failed to assign role" + roleName + " to user " + username + ": HTTP " + response.getStatusCode() + " " + response.getBody());
         }
+    }
+
+    public String getUserAccessToken(String username, String password) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("client_id", clientId);
+        params.add("grant_type", "password");
+        params.add("username", username);
+        params.add("password", password);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
+
+        String url = keyCloakUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+
+        if (!response.getStatusCode().is2xxSuccessful() || !response.getBody().containsKey("access_token")) {
+            throw new RuntimeException("Failed to obtain user access token from Keycloak");
+        }
+        return response.getBody().get("access_token").toString();
     }
 }
 
