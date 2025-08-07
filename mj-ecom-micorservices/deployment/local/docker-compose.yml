@@ -41,7 +41,7 @@ services:
       - backend
     restart: unless-stopped
     volumes:
-      - mongodb_data:/data/mongodb
+      - mongodb_data:/data/db
 
   redis:
     container_name: redis_container

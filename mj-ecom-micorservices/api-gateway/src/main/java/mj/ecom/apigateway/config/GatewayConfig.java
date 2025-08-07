@@ -50,7 +50,7 @@ public class GatewayConfig {
                                 )
                         )
                         .uri("lb://USER-SERVICE"))
-                .route("product-service", r -> r.path("/api/products/**")
+                .route("product-service", r -> r.path("/api/products","/api/products/**")
                         //.filters(f -> f.rewritePath("/products(?<segment>/?.*)", "/api/products${segment}"))
                         .filters(f -> f
                                 .retry(retryConfig -> retryConfig
@@ -67,7 +67,7 @@ public class GatewayConfig {
                                 )
                         )
                         .uri("lb://PRODUCT-SERVICE"))
-                .route("order-service", r -> r.path("/api/cart/**", "/api/orders/**")
+                .route("order-service", r -> r.path("/api/cart/**", "/api/orders/**", "/api/cart", "/api/orders")
                         //.filters(f -> f.rewritePath("/(?<segment>.*)", "/api/${segment}"))
                         /*.filters(f -> f.circuitBreaker(config -> config
                                 .setName("ecomCircuitBreaker")

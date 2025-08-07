@@ -23,6 +23,7 @@ public class EmailService {
     // To send a simple email
     public void sendSimpleMail(EmailDetails details) {
         try {
+            log.info("Sending mail to {} ", details.getRecipient());
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(sender);
             message.setTo(details.getRecipient());

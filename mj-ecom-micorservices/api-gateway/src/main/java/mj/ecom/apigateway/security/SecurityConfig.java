@@ -30,8 +30,8 @@ public class SecurityConfig {
                         .pathMatchers("/eureka/**").permitAll()
                         .pathMatchers("/api/users/login").permitAll()
                         .pathMatchers("/api/users/**").permitAll() // allows all user related api -> login/signup
-                        .pathMatchers("/api/products/**").hasRole("PRODUCT")
-                        .pathMatchers("/api/orders/**").hasRole("ORDER")
+                        .pathMatchers("/api/products/**").hasRole("USER")
+                        .pathMatchers("/api/orders/**").hasRole("USER")
                         .anyExchange().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(grantedAuthoritiesConverter())))

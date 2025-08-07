@@ -211,3 +211,25 @@
         padding: 40px 0;
     }
 }
+
+.signup-grid-form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1.3rem;
+    /* Shrink fields so more fit above the fold */
+}
+
+.signup-grid-form > .two-col {
+    display: contents; /* Use grid parent's layout */
+}
+
+@media (max-width: 700px) {
+    .signup-grid-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+.signup-grid-form label {
+    margin-top: 2px;
+}
