@@ -11,7 +11,9 @@ import mj.ecom.userservice.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -105,8 +107,13 @@ public class UserService {
         return response;
     }
 
-    public String loginAndGetToken(String username, String password) {
+    public Map<String, Object> loginAndGetToken(String username, String password) {
         // Call the Keycloak token endpoint with provided credentials
-        return keyCloakAdmin.getUserAccessToken(username, password);
+        Map<String, Object> map =  new HashMap<>();
+        UserResponse userResponse = userRepository.getUserDetailsByUserName(username);
+        String token = keyCloakAdmin.getUserAccessToken(username, password);
+        map.put("access_token", token);
+        map.put("user", userResponse);
+        return map;
     }
 }

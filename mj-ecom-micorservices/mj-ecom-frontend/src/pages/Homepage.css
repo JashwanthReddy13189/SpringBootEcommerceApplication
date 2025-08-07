@@ -1,0 +1,201 @@
+.homepage-bg {
+    background: #ffeee0;
+    min-height: 100vh;
+    padding: 0 0 50px 0;
+    position: relative;
+}
+.header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 48px 18px 32px;
+    background: #ffeee0;
+}
+.header-logo {
+    height: 46px;
+    margin-right: 16px;
+}
+.header-title {
+    font-size: 2.0rem;
+    font-weight: 800;
+    color: #111111;
+    letter-spacing: -1.5px;
+    margin-left: 8px;
+}
+.header-actions {
+    position: relative;
+}
+.cart-btn {
+    background: #fff;
+    border-radius: 50%;
+    border: none;
+    width: 54px;
+    height: 54px;
+    box-shadow: 0 1px 8px rgba(0,0,0,.09);
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cart-badge {
+    position: absolute;
+    top: 7px;
+    right: 9px;
+    background: #fd7e56;
+    color: #fff;
+    font-size: 0.95em;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid #fff;
+}
+
+.homepage-error {
+    color: #ba2626;
+    text-align: center;
+    margin: 20px 0;
+    font-weight: 500;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px 14px;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px 0 rgba(0,0,0,0.07);
+    padding: 14px 14px 20px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow .15s;
+}
+.product-card:hover {
+    box-shadow: 0 10px 34px 0 rgba(253,126,86,0.16);
+}
+
+.product-img-wrap {
+    width: 122px;
+    height: 122px;
+    border-radius: 14px;
+    background: #f9f6f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+.product-img {
+    width: 105px;
+    height: 105px;
+    object-fit: contain;
+}
+
+.product-info { width: 100%; text-align: center; }
+.product-title {
+    font-size: 1.11rem;
+    font-weight: 600;
+    color: #1a191d;
+    margin-bottom: 4px;
+}
+.product-category {
+    font-size: 0.92rem;
+    color: #fd7e56;
+    margin-bottom: 3px;
+}
+.product-desc {
+    font-size: 0.93rem;
+    color: #888;
+    margin: 5px 0 8px 0;
+    min-height: 38px;
+    max-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.product-price {
+    color: #0c8b43;
+    font-size: 1.08rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.stock {
+    font-size: 0.93rem;
+    margin-bottom: 10px;
+}
+.stock.avail { color: #37ad4b; }
+.stock.out { color: #ba2626; }
+
+.product-add-btn {
+    background: #fd7e56;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 1.02rem;
+    font-weight: 600;
+    padding: 7px 22px;
+    margin-top: 1px;
+    cursor: pointer;
+    transition: background .18s;
+}
+.product-add-btn[disabled], .product-add-btn:disabled {
+    background: #ddd;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px; /* space between cart and account-info */
+}
+
+.account-info {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    padding: 6px 16px 6px 14px;
+    font-size: 1rem;
+    color: #444;
+    min-width: 130px;
+}
+
+.account-username {
+    font-weight: 600;
+    color: #ff8656;
+    margin-right: 10px;
+}
+
+/* Optional: user icon more orange */
+.account-info svg {
+    color: #fd7e56;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: #998;
+    font-size: 1em;
+    margin-left: 8px;
+    cursor: pointer;
+    padding: 2px 8px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: color .16s, background .16s;
+}
+.logout-btn:hover {
+    color: #ec2222;
+    background: #fce5df;
+}

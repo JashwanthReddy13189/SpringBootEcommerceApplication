@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,8 +56,8 @@ public class UserController {
         String username = loginRequest.get("username");
         String password = loginRequest.get("password");
         try {
-            String token = userService.loginAndGetToken(username, password);
-            return ResponseEntity.ok(Map.of("access_token", token));
+            Map<String, Object> objectMap = userService.loginAndGetToken(username, password);
+            return ResponseEntity.ok(objectMap);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }

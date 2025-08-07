@@ -22,8 +22,14 @@ function LoginPage() {
         try {
             const data = await loginUser(form);
             localStorage.setItem('access_token', data.access_token);
-            console.log(" access token - " + data.access_token);
-            navigate('/dashboard');
+            localStorage.setItem('username', form.username);
+            localStorage.setItem("firstname", data.user.firstName);
+            localStorage.setItem("firstname", data.user.lastName);
+            localStorage.setItem("user_id", data.user.id);
+            localStorage.setItem("email", data.user.email);
+            localStorage.setItem("user_info", JSON.stringify(data.user));
+
+            navigate('/homepage');
         } catch {
             setError('Invalid credentials!');
         }
