@@ -3,22 +3,22 @@ package mj.ecom.orderservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mj.ecom.orderservice.clients.ProductServiceClient;
+import mj.ecom.orderservice.clients.UserServiceClient;
 import mj.ecom.orderservice.dto.OrderCreatedEvent;
 import mj.ecom.orderservice.dto.OrderItemDTO;
 import mj.ecom.orderservice.dto.OrderResponse;
+import mj.ecom.orderservice.dto.UserResponse;
 import mj.ecom.orderservice.model.CartItem;
 import mj.ecom.orderservice.model.Order;
 import mj.ecom.orderservice.model.OrderItem;
 import mj.ecom.orderservice.model.OrderStatus;
 import mj.ecom.orderservice.repository.OrderRepository;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,8 +30,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final StreamBridge streamBridge;
     private final ProductServiceClient productServiceClient;
+    private final UserServiceClient userServiceClient;
 
     public Optional<OrderResponse> createOrder(String userId) {
+
+        // validate the user from user-service microservice
+        UserResponse userResponse = userServiceClient.getUserById(userId);
+
         // Validate for cart items and also userId
         List<CartItem> cartItems = cartService.getCart(userId);
         if (cartItems.isEmpty()) {
@@ -53,6 +58,7 @@ public class OrderService {
                 .map(item -> new OrderItem(
                         null,
                         item.getProductId(),
+                        item.getProductName(),
                         item.getQuantity(),
                         item.getPrice(),
                         order
@@ -69,6 +75,8 @@ public class OrderService {
         OrderCreatedEvent orderCreatedEvent = new OrderCreatedEvent(
                 savedOrder.getId(),
                 savedOrder.getUserId(),
+                userResponse.getFirstName() + " "  + userResponse.getLastName(),
+                userResponse.getEmail(),
                 savedOrder.getStatus(),
                 mapToOrderItemDTOs(savedOrder.getItems()),
                 savedOrder.getTotalAmount(),
@@ -97,6 +105,7 @@ public class OrderService {
                 .map(item -> new OrderItemDTO(
                         item.getId(),
                         item.getProductId(),
+                        item.getProductName(),
                         item.getQuantity(),
                         item.getPrice(),
                         item.getPrice().multiply(new BigDecimal(item.getQuantity()))
@@ -113,6 +122,7 @@ public class OrderService {
                         .map(orderItem -> new OrderItemDTO(
                                 orderItem.getId(),
                                 orderItem.getProductId(),
+                                orderItem.getProductName(),
                                 orderItem.getQuantity(),
                                 orderItem.getPrice(),
                                 orderItem.getPrice().multiply(new BigDecimal(orderItem.getQuantity()))

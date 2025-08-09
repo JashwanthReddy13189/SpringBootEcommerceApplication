@@ -1,16 +1,19 @@
 spring:
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/productdb}
-    username: ${SPRING_DATASOURCE_USERNAME:jashuu}
-    password: ${SPRING_DATASOURCE_PASSWORD:jashuu}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
-
-  jpa:
-    database: postgresql
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#  datasource:
+#    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/productdb}
+#    username: ${SPRING_DATASOURCE_USERNAME:jashuu}
+#    password: ${SPRING_DATASOURCE_PASSWORD:jashuu}
+#    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+#
+#  jpa:
+#    database: postgresql
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    mongodb:
+      uri: mongodb://mongo:27017/Product-Service?authSource=admin
 
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
