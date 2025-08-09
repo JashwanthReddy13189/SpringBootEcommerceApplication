@@ -1,0 +1,151 @@
+.profile-bg {
+    background: #f9fafc;
+    min-height: 100vh;
+    padding: 42px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.profile-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(70,70,140,0.08);
+    padding: 30px 38px;
+    min-width: 430px;
+    max-width: 540px;
+    width: 100%;
+}
+
+.profile-card h2 {
+    color: #fd7e56;
+    font-size: 2.1rem;
+    font-weight: 700;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;       /* Controls separation between main form blocks */
+    margin: 18px 0 0 0;
+}
+
+.form-row {
+    display: flex;
+    gap: 18px;
+}
+
+.form-row:not(:last-child) {
+    margin-bottom: 0;
+}
+
+.form-field {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.form-field label {
+    font-weight: 600;
+    color: #9d581a;
+    margin-bottom: 6px;
+}
+
+.form-field input {
+    width: 100%;
+    padding: 9px 13px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #f1b564;
+    outline: none;
+    background: #f9f6f0;
+    margin-bottom: 0;
+    box-sizing: border-box;
+}
+
+/* Address card styling */
+.address-fieldset {
+    border: 1.5px solid #fee9c9;
+    border-radius: 10px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+    padding: 32px 18px 12px 18px;  /* Top padding ensures fields won't go under legend */
+    background: #fff8e8;
+    position: relative;             /* Required for absolute positioning of legend */
+}
+
+.address-fieldset legend {
+    color: #111111;
+    font-weight: 600;
+    font-size: 1.08em;
+    background: #fff8e8;           /* Match the block bg color */
+    padding: 0 12px;
+    position: absolute;
+    top: 12px;    /* This controls how far down the legend sits! */
+    left: 0px;
+    /* or use right: 18px; as well if you want */
+    margin: 0;
+    z-index: 1;
+}
+
+
+.address-fieldset .form-row {
+    margin-bottom: 8px;
+}
+
+.profile-form button[type="submit"] {
+    background-color: #fd7e56;
+    color: #fff;
+    font-weight: bold;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.13em;
+    margin-top: 10px;
+    cursor: pointer;
+    appearance: none;
+    transition: background .15s;
+}
+.profile-form button[type="submit"]:hover {
+    background-color: #ffc14f;
+    color: #434344;
+}
+
+.profile-success {
+    margin-top: 16px;
+    color: #2d7a43;
+    font-weight: 500;
+    background: #e5faf4;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-align: left;
+}
+.profile-error {
+    margin-top: 16px;
+    color: #e24e4e;
+    font-weight: 500;
+    background: #ffeaea;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-align: left;
+}
+
+/* Responsive: stack rows vertically on mobile */
+@media (max-width: 650px) {
+    .profile-card {
+        min-width: 0;
+        max-width: 100%;
+        padding: 10px 5px;
+    }
+    .profile-form {
+        gap: 12px;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .address-fieldset {
+        padding: 20px 6px 6px 6px;   /* proportionally smaller padding */
+    }
+}

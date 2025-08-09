@@ -11,3 +11,46 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Dropdown css properties */
+
+.dropdown-account-root {
+  display: inline-block;
+  margin-left: 16px;
+}
+.dropdown-account-btn {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 20px;
+  padding: 6px 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background .14s;
+}
+.dropdown-account-menu {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #fff;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+  border-radius: 13px;
+  padding: 7px 0 6px 0;
+  min-width: 170px;
+  z-index: 100;
+}
+.dropdown-account-item {
+  display: flex;
+  align-items: center;
+  padding: 9px 18px;
+  cursor: pointer;
+  font-size: 1.07em;
+  transition: background .14s;
+}
+.dropdown-account-item:hover {
+  background: #ffeee0;
+}
+.dropdown-account-name { color: #ff8656; margin-left: 2px; }

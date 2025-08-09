@@ -60,4 +60,5 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/mj-ecom
+          issuer-uri: http://localhost:8443/realms/mj-ecom
+          jwk-set-uri: http://keycloak:8080/realms/mj-ecom/protocol/openid-connect/certs

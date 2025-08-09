@@ -39,6 +39,8 @@ services:
       - "27017:27017"
     networks:
       - backend
+    volumes:
+      - mongodb_data:/data/db
     restart: unless-stopped
 
   redis:
@@ -72,12 +74,19 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
     depends_on:
       - zookeeper
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "bash", "-c", "nc -z localhost 9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
 
   rabbitmq:
     container_name: rabbitmq
@@ -338,7 +347,8 @@ services:
   # Microservices Infrastructure
   # Config-service
   config-service:
-    build: ../../config-service
+    #build: ../../config-service
+    image: jashwanthreddymr/config-service:version-1.0
     container_name: config-service
     ports:
       - "8080:8080"
@@ -360,8 +370,10 @@ services:
       timeout: 5s
       retries: 5
 
+  #eureka-service
   eureka-service:
-    build: ../../eureka-service
+    #build: ../../eureka-service
+    image: jashwanthreddymr/eureka-service:version-1.0
     container_name: eureka-service
     ports:
       - "8761:8761"
@@ -375,10 +387,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 45s
 
+  # api-gateway
   api-gateway:
-    build: ../../api-gateway
+    #build: ../../api-gateway
+    image: jashwanthreddymr/api-gateway:version-1.0
     container_name: api-gateway
     ports:
       - "8085:8085"
@@ -410,11 +423,13 @@ services:
         delay: 5s
         max_attempts: 3
 
+  # user-service
   user-service:
-    build: ../../user-service
+    #build: ../../user-service
+    image: jashwanthreddymr/user-service:version-1.0
     container_name: user-service
-    ports:
-      - "8082:8082"
+#    ports:
+#      - "8082:8082"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - MONGO_URI=mongodb://mongo:27017/User-Service?authSource=admin
@@ -447,21 +462,19 @@ services:
       interval: 15s
       timeout: 10s
       retries: 3
-      start_period: 60s
     restart: on-failure
 
+  #product-service
   product-service:
-    build: ../../product-service
+    #build: ../../product-service
+    image: jashwanthreddymr/product-service:version-1.0
     container_name: product-service
     networks:
       - backend
-    ports:
-      - "8083:8083"
+#    ports:
+#      - "8083:8083"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - POSTGRES_URL=jdbc:postgresql://postgres:5432/productdb
-      - POSTGRES_USERNAME=jashuu
-      - POSTGRES_PASSWORD=jashuu
       - RABBITMQ_HOST=${RABBITMQ_HOST}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
@@ -479,16 +492,17 @@ services:
       interval: 15s
       timeout: 10s
       retries: 3
-      start_period: 60s
-    #restart: on-failure
+    restart: on-failure
 
+  #order-service
   order-service:
-    build: ../../order-service
+    #build: ../../order-service
+    image: jashwanthreddymr/order-service:version-1.0
     container_name: order-service
     networks:
       - backend
-    ports:
-      - "8084:8084"
+#    ports:
+#      - "8084:8084"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/orderdb
@@ -507,27 +521,32 @@ services:
       interval: 15s
       timeout: 10s
       retries: 3
-      start_period: 60s
+    restart: on-failure
 
-
+  #notification-service
   notification-service:
-    build: ../../notification-service
+    #build: ../../notification-service
+    image: jashwanthreddymr/notification-service:version-1.0
     container_name: notification-service
+    networks:
+      - backend
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-    ports:
-      - "8086:8086"
+#    ports:
+#      - "8086:8086"
     depends_on:
       config-service:
         condition: service_healthy
       eureka-service:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "wget", "--spider", "http://localhost:8086/actuator/health" ]
       interval: 15s
       timeout: 10s
       retries: 3
-      start_period: 60s
+    restart: on-failure
 
 networks:
   backend:

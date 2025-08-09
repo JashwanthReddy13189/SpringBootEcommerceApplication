@@ -6,6 +6,8 @@ spring:
 #    password: ${RABBITMQ_PASSWORD:guest}
 #    virtual-host: ${RABBITMQ_VHOST:guest}
 #    connection-timeout: 30000
+  kafka:
+    bootstrap-servers: kafka:9092
 
   cloud:
     function:
@@ -22,6 +24,19 @@ spring:
         binder:
           brokers: kafka:9092
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: noreply.jashwanthreddy@gmail.com
+    password: saki klmf ofri frol
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
 management:
   endpoints:
     web:
@@ -30,6 +45,15 @@ management:
   endpoint:
     health:
       show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
 
 #rabbitmq:
 #  exchange:
